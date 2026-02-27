@@ -30,4 +30,5 @@ type func has 2 result(s)
 
 # Resources
 [WebAssembly Spec](https://webassembly.github.io/spec/core/binary/types.html#composite-types)
+[wabt](https://github.com/WebAssembly/wabt)
 [LEB128](https://en.wikipedia.org/wiki/LEB128) - decode algorithm
