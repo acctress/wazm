@@ -16,7 +16,10 @@ pub const Decoder = struct {
     pub fn decode(self: *Decoder) !module.Module {
         try self.readMagicHeader();
 
-        var mod: module.Module = .{ .types = try self.allocator.alloc(module.FuncType, 12) };
+        var mod: module.Module = .{
+            .types = try self.allocator.alloc(module.FuncType, 12),
+            .funcsec = undefined,
+        };
 
         var i: u32 = 0;
         while (!self.reader.at_eof()) : (i += 1) {
@@ -25,6 +28,8 @@ pub const Decoder = struct {
 
             if (section_id == 0x01) {
                 mod.types = try self.parseTypeSection();
+            } else if (section_id == 0x03) {
+                mod.funcsec = try self.parseFunctionSection();
             } else {
                 try self.reader.skip(section_len);
             }
@@ -90,5 +95,17 @@ pub const Decoder = struct {
         }
 
         return .{ .params = params, .results = results };
+    }
+
+    fn parseFunctionSection(self: *Decoder) ![]u32 {
+        const indice_count = try self.reader.readULEB128();
+        var indices = try self.allocator.alloc(u32, indice_count);
+
+        var i: u32 = 0;
+        while (i < indice_count) : (i += 1) {
+            indices[i] = try self.reader.readULEB128();
+        }
+
+        return indices;
     }
 };

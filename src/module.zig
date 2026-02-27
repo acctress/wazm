@@ -5,4 +5,5 @@ pub const FuncType = struct {
 
 pub const Module = struct {
     types: []FuncType,
+    funcsec: []u32,
 };

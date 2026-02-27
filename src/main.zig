@@ -22,4 +22,8 @@ pub fn main() !void {
         std.debug.print("type func has {d} parameter(s)\n", .{t.params.len});
         std.debug.print("type func has {d} result(s)\n", .{t.results.len});
     }
+
+    for (module.funcsec) |v| {
+        std.debug.print("func indicie {d}\n", .{v});
+    }
 }
