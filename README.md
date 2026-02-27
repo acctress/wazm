@@ -21,11 +21,18 @@ Two functions are defined in the module, the first function is defined with two 
 With `wat2wasm`, `.wat` files can be compiled to `.wasm` binaries, with this wazm can decode this program.
 
 ```
+❯ zig build run
 module has 2 types
 type func has 2 parameter(s)
 type func has 1 result(s)
 type func has 1 parameter(s)
 type func has 2 result(s)
+func indice 0
+func indice 1
+code sec func body has 0 local(s)
+code sec func body expr size is 5
+code sec func body has 0 local(s)
+code sec func body expr size is 4
 ```
 
 # Resources

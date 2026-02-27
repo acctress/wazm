@@ -26,4 +26,9 @@ pub fn main() !void {
     for (module.funcsec) |v| {
         std.debug.print("func indicie {d}\n", .{v});
     }
+
+    for (module.codesec) |c| {
+        std.debug.print("code sec func body has {d} local(s)\n", .{c.locals.len});
+        std.debug.print("code sec func body expr size is {d}\n", .{c.expr.len});
+    }
 }

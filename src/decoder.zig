@@ -19,6 +19,7 @@ pub const Decoder = struct {
         var mod: module.Module = .{
             .types = try self.allocator.alloc(module.FuncType, 12),
             .funcsec = undefined,
+            .codesec = undefined,
         };
 
         var i: u32 = 0;
@@ -30,6 +31,8 @@ pub const Decoder = struct {
                 mod.types = try self.parseTypeSection();
             } else if (section_id == 0x03) {
                 mod.funcsec = try self.parseFunctionSection();
+            } else if (section_id == 0x0A) {
+                mod.codesec = try self.parseCodeSection();
             } else {
                 try self.reader.skip(section_len);
             }
@@ -107,5 +110,48 @@ pub const Decoder = struct {
         }
 
         return indices;
+    }
+
+    fn parseCodeSection(self: *Decoder) ![]module.FuncBody {
+        const entries = try self.reader.readULEB128();
+
+        var bodies = try self.allocator.alloc(module.FuncBody, entries);
+
+        for (0..entries) |i| {
+            // entry length, ignorte for now
+            _ = try self.reader.readULEB128();
+
+            var body: module.FuncBody = .{
+                .locals = undefined,
+                .expr = undefined,
+            };
+
+            const local_decl_count = try self.reader.readULEB128();
+
+            body.locals = try self.allocator.alloc(module.Local, local_decl_count);
+
+            for (0..local_decl_count) |j| {
+                const count = try self.reader.readULEB128();
+                const value_type = try self.reader.readByte();
+
+                body.locals[j] = module.Local{
+                    .count = count,
+                    .value_type = value_type,
+                };
+            }
+
+            var bytes = std.array_list.Managed(u8).init(self.allocator);
+            while (true) {
+                const byte = try self.reader.readByte();
+                if (byte == 0x0B) break;
+                try bytes.append(byte);
+            }
+
+            body.expr = try bytes.toOwnedSlice();
+
+            bodies[i] = body;
+        }
+
+        return bodies;
     }
 };
