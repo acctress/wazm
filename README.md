@@ -27,3 +27,7 @@ type func has 1 result(s)
 type func has 1 parameter(s)
 type func has 2 result(s)
 ```
+
+# Resources
+[WebAssembly Spec](https://webassembly.github.io/spec/core/binary/types.html#composite-types)
+[LEB128](https://en.wikipedia.org/wiki/LEB128) - decode algorithm
